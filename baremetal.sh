@@ -22,7 +22,7 @@ function baremetal_setup {
 	git clone https://github.com/ReturnInfinity/BareMetal.git -q
 	git clone https://github.com/ReturnInfinity/BareMetal-Monitor.git -q
 	git clone https://github.com/ReturnInfinity/BMFS.git -q
-	git clone https://github.com/ReturnInfinity/BareMetal-Demo.git -q
+	git clone --branch new-demos https://github.com/weremsoft/BareMetal-Demo.git -q
 	cd ..
 	echo "OK"
 
@@ -183,6 +183,7 @@ function baremetal_demos {
 	if [ "$(uname)" != "Darwin" ]; then
 		./bmfs bmfs.img write helloc.app
 		./bmfs bmfs.img write gavare.app
+		./bmfs bmfs.img write graphics.app
 	fi
 
 	# Create FAT32/BMFS hybrid disk
