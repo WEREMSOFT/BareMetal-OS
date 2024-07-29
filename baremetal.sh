@@ -22,7 +22,8 @@ function baremetal_setup {
 	git clone https://github.com/ReturnInfinity/BareMetal.git -q
 	git clone https://github.com/ReturnInfinity/BareMetal-Monitor.git -q
 	git clone https://github.com/ReturnInfinity/BMFS.git -q
-	git clone --branch new-demos https://github.com/weremsoft/BareMetal-Demo.git -q
+	git clone --branch model-demo https://github.com/weremsoft/BareMetal-Demo.git -q
+	
 	cd ..
 	echo "OK"
 
@@ -175,20 +176,22 @@ function baremetal_demos {
 	cd src/BareMetal-Demo/bin
 	cp *.app ../../../sys/
 	cd ../../../sys/
-	./bmfs bmfs.img write hello.app
-	./bmfs bmfs.img write ethtest.app
-	./bmfs bmfs.img write sysinfo.app
-	./bmfs bmfs.img write euler1.app
-	./bmfs bmfs.img write smptest.app
+	# ./bmfs bmfs.img write hello.app
+	# ./bmfs bmfs.img write ethtest.app
+	# ./bmfs bmfs.img write sysinfo.app
+	# ./bmfs bmfs.img write euler1.app
+	# ./bmfs bmfs.img write smptest.app
 	if [ "$(uname)" != "Darwin" ]; then
-		./bmfs bmfs.img write helloc.app
-		./bmfs bmfs.img write gavare.app
-		./bmfs bmfs.img write cube3d.app
+		# ./bmfs bmfs.img write helloc.app
+		# ./bmfs bmfs.img write gavare.app
+		# ./bmfs bmfs.img write cube3d.app
+		./bmfs bmfs.img write modelViewer.app
 	fi
 
 	# Create FAT32/BMFS hybrid disk
 	cat fat32.img bmfs.img > baremetal_os.img
 }
+
 
 function baremetal_run {
 	baremetal_sys_check
@@ -196,7 +199,7 @@ function baremetal_run {
 	cmd=( qemu-system-x86_64
 		-machine q35
 		-name "BareMetal OS"
-		-m 256
+		-m 16384
 		-smp sockets=1,cpus=4
 
 	# Network configuration. Use one controller.
@@ -257,7 +260,7 @@ function baremetal_run-uefi {
 		-machine q35
 		-name "BareMetal OS (UEFI)"
 		-bios sys/OVMF.fd
-		-m 256
+		-m 1024
 		-smp sockets=1,cpus=4
 	#	-cpu qemu64,pdpe1gb # Support for 1GiB pages
 
@@ -308,7 +311,7 @@ function baremetal_run_netclient {
 	cmd=( qemu-system-x86_64
 		-machine q35
 		-name "BareMetal OS (Second Instance)"
-		-m 256
+		-m 1024
 		-smp sockets=1,cpus=4
 		-netdev socket,id=testnet,connect=127.0.0.1:1234
 		-device e1000,netdev=testnet,mac=10:11:12:13:CA:FE
@@ -322,6 +325,7 @@ function baremetal_run_netclient {
 function baremetal_vdi {
 	baremetal_sys_check
 	echo "Creating VDI image..."
+	
 	VDI="3C3C3C2051454D5520564D205669727475616C204469736B20496D616765203E3E3E0A00000000000000000000000000000000000000000000000000000000007F10DABE010001008001000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000600000000000000000000000000000002000000000000000000100000000000001000000000000001000004000000AE8AA5DE02E79043BE0B20DA0E2863EC00D36EACC7B88D4AA988CF098BC1C90200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 
 	qemu-img convert -O vdi "$OUTPUT_DIR/baremetal_os.img" "$OUTPUT_DIR/BareMetal_OS.vdi"
