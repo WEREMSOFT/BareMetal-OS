@@ -184,7 +184,7 @@ function baremetal_demos {
 	if [ "$(uname)" != "Darwin" ]; then
 		# ./bmfs bmfs.img write helloc.app
 		# ./bmfs bmfs.img write gavare.app
-		# ./bmfs bmfs.img write cube3d.app
+		./bmfs bmfs.img write cube3d.app
 		./bmfs bmfs.img write modelViewer.app
 	fi
 
